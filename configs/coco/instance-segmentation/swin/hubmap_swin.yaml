@@ -1,0 +1,40 @@
+_BASE_: maskdino_R50_bs16_50ep_4s_dowsample1_2048.yaml
+
+
+MODEL:
+  
+  # hubmap, no aug  
+  # PIXEL_MEAN: [169.9438800320896, 106.06599335797257, 162.45926101296212]
+  # PIXEL_STD: [31.711833278888392, 46.59640507649894, 34.18956538593003]
+
+  # hubmap, aug
+  PIXEL_MEAN: [152.577875762558, 98.43150114898681, 165.79595212402344]
+  PIXEL_STD: [43.71437220777311, 52.48332532239995, 39.48350871997029]
+
+
+  
+  WEIGHTS: "https://github.com/IDEA-Research/detrex-storage/releases/download/maskdino-v0.1.0/maskdino_swinl_50ep_300q_hid2048_3sd1_instance_maskenhanced_mask52.3ap_box59.0ap.pth"
+
+  SEM_SEG_HEAD:
+    NUM_CLASSES: 1
+
+SOLVER:
+  # BASE_LR: 0.0001  # for BS=16
+  BASE_LR: 0.00002  # a bit slow for bs=2
+  IMS_PER_BATCH: 2
+  MAX_ITER: 66000
+  AMP:
+    ENABLED: True
+  CHECKPOINT_PERIOD: 500
+TEST:
+  EVAL_PERIOD: 500
+#  EVAL_FLAG: 1
+DATASETS:
+  TRAIN: ("hubmap_instance_train",)
+  TEST: ("hubmap_instance_val",)
+  
+
+DATALOADER:
+  NUM_WORKERS: 4
+  
+WANDB_NAME: "maskdino-swin"

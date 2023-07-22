@@ -50,7 +50,7 @@ from maskdino import (
     MaskFormerSemanticDatasetMapper,
     SemanticSegmentorWithTTA,
     add_maskdino_config,
-    DetrDatasetMapper,
+    DetrDatasetMapper,    
 )
 import random
 from detectron2.engine import (
@@ -64,7 +64,9 @@ from detectron2.engine import (
     SimpleTrainer
 )
 import weakref
+import wandb
 
+from maskdino.wandb_writer import WAndBWriter
 
 class Trainer(DefaultTrainer):
     """
@@ -329,6 +331,7 @@ def setup(args):
     Create configs and perform basic setups.
     """
     cfg = get_cfg()
+    cfg.WANDB_NAME = ''
     # for poly lr schedule
     add_deeplab_config(cfg)
     add_maskdino_config(cfg)
@@ -359,9 +362,10 @@ def main(args):
             verify_results(cfg, res)
         return res
 
-    trainer = Trainer(cfg)
-    trainer.resume_or_load(resume=args.resume)
-    return trainer.train()
+    with wandb.init(project='hubmap-det2', name=cfg.WANDB_NAME, sync_tensorboard=True) as run:
+        trainer = Trainer(cfg)
+        trainer.resume_or_load(resume=args.resume)
+        return trainer.train()
 
 
 if __name__ == "__main__":

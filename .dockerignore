@@ -1,0 +1,5 @@
+datasets/hubmap_50
+datasets/hubmap
+output
+checkpoints
+wandb
